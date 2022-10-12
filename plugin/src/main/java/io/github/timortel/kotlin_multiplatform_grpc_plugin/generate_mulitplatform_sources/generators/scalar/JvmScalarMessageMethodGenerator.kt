@@ -1,6 +1,7 @@
 package io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.scalar
 
 import com.squareup.kotlinpoet.*
+import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.ProtoType
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.content.ProtoMessage
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.content.ProtoMessageAttribute
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.Const
@@ -19,6 +20,9 @@ object JvmScalarMessageMethodGenerator : ScalarMessageMethodGenerator(true) {
 
                     if (attr.types.isEnum) {
                         addCode("return %T.%N(%N.${attr.name}Value)", attr.commonType, Const.Enum.getEnumForNumFunctionName, implName)
+                    } else if (attr.types.protoType == ProtoType.BYTES) {
+                        addCode("return ")
+                        addCode(CodeBlock.of("%N.%N.toByteArray()", implName, attr.name))
                     } else {
                         val getter = CodeBlock.of("%N.%N", implName, attr.name)
 
