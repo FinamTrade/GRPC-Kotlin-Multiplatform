@@ -20,7 +20,8 @@ class ProtoMessageAttribute(
     val types: Types,
     val attributeType: AttributeType,
     val protoId: Int,
-    val isOneOfAttribute: Boolean
+    val isOneOfAttribute: Boolean,
+    val default: String? = null
 ) {
     val capitalizedName = name.capitalize(Locale.ROOT)
 
@@ -30,15 +31,19 @@ class ProtoMessageAttribute(
      */
     fun commonDefaultValue(mutable: Boolean, useEmptyMessage: Boolean): CodeBlock = when (attributeType) {
         is Scalar -> when (types.protoType) {
-            ProtoType.DOUBLE -> CodeBlock.of("0.0")
-            ProtoType.FLOAT -> CodeBlock.of("0f")
-            ProtoType.INT_32 -> CodeBlock.of("0")
-            ProtoType.INT_64 -> CodeBlock.of("0L")
-            ProtoType.BOOL -> CodeBlock.of("false")
-            ProtoType.STRING -> CodeBlock.of("\"\"")
-            ProtoType.MESSAGE -> if (useEmptyMessage) {
-                CodeBlock.of("%T()", types.commonType)
-            } else CodeBlock.of("null")
+            ProtoType.DOUBLE -> CodeBlock.of(default ?: "0.0")
+            ProtoType.FLOAT -> CodeBlock.of(default ?: "0f")
+            ProtoType.INT_32 -> CodeBlock.of(default ?: "0")
+            ProtoType.INT_64 -> CodeBlock.of(default ?: "0L")
+            ProtoType.BOOL -> CodeBlock.of(default ?: "false")
+            ProtoType.STRING -> CodeBlock.of(default ?: "\"\"")
+            ProtoType.MESSAGE -> {
+                if (useEmptyMessage) {
+                    CodeBlock.of("%T()", types.commonType)
+                } else {
+                    CodeBlock.of("null")
+                }
+            }
             ProtoType.ENUM -> {
                 CodeBlock.of(
                     "%T.%N(0)",
