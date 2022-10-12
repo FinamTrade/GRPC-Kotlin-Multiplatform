@@ -39,7 +39,7 @@ class IOSProtoFileWriter(private val protoFile: ProtoFile) : ProtoFileWriter(pro
                                     if (attr.types.isNullable) {
                                         addParameter(
                                             ParameterSpec.builder(attr.name, attr.commonType.copy(nullable = true))
-                                                .defaultValue("null")
+                                                .defaultValue(attr.default ?: "null")
                                                 .build()
                                         )
                                     } else {

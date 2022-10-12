@@ -14,7 +14,7 @@ option : 'option' COMMENT_OR_WS? optionName=EXPRESSION_NAME COMMENT_OR_WS? '=' C
 
 message : 'message' COMMENT_OR_WS? messageName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? (message_attribute | one_of | proto_enum | message | map))* COMMENT_OR_WS? '}';
 
-message_attribute : repeated='repeated'? COMMENT_OR_WS? type=EXPRESSION_NAME COMMENT_OR_WS? name=EXPRESSION_NAME COMMENT_OR_WS? '=' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? ';';
+message_attribute : repeated='repeated'? COMMENT_OR_WS? type=EXPRESSION_NAME COMMENT_OR_WS? name=EXPRESSION_NAME COMMENT_OR_WS? '=' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? '['? COMMENT_OR_WS? 'default='? COMMENT_OR_WS? defaultValue=VALUE_STRING? COMMENT_OR_WS? ']'? COMMENT_OR_WS? ';';
 
 one_of : 'oneof' WS? one_of_name=EXPRESSION_NAME WS? '{' (COMMENT_OR_WS? message_attribute)* COMMENT_OR_WS? '}';
 
