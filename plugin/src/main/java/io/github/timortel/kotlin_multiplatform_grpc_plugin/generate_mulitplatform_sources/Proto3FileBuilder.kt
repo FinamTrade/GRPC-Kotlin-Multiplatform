@@ -260,7 +260,9 @@ class Proto3FileBuilder(
             "double" -> DOUBLE to ProtoType.DOUBLE
             "float" -> FLOAT to ProtoType.FLOAT
             "int32" -> INT to ProtoType.INT_32
+            "uint32" -> INT to ProtoType.INT_32
             "int64" -> LONG to ProtoType.INT_64
+            "uint64" -> LONG to ProtoType.INT_64
             "bool" -> BOOLEAN to ProtoType.BOOL
             "string" -> STRING to ProtoType.STRING
             else -> null to null
