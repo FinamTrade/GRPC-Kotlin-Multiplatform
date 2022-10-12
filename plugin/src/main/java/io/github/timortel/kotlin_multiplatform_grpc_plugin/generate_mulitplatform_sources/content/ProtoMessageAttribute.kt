@@ -72,7 +72,7 @@ sealed class AttributeType(val isEnum: Boolean)
 /**
  * @property inOneOf if this attribute is in a one of
  */
-class Scalar(val inOneOf: Boolean, isEnum: Boolean) : AttributeType(isEnum)
+class Scalar(val inOneOf: Boolean, isEnum: Boolean, isOptional: Boolean) : AttributeType(isEnum)
 
 class Repeated(isEnum: Boolean) : AttributeType(isEnum)
 
