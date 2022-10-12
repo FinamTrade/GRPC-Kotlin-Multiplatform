@@ -3,8 +3,8 @@ package io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatfo
 import com.squareup.kotlinpoet.*
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.anltr.Proto3BaseListener
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.anltr.Proto3Parser
-import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.Const
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.content.*
+import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.Const
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.message_tree.EnumNode
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.message_tree.MessageNode
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.message_tree.Node
@@ -127,10 +127,15 @@ class Proto3FileBuilder(
 
         val isRepeated = ctx.repeated != null
 
-        val type = if (isRepeated) Repeated(types.isEnum) else Scalar(
-            ctx.parent.ruleIndex == Proto3Parser.RULE_one_of,
-            types.isEnum
-        )
+        val type = if (isRepeated) {
+            Repeated(types.isEnum)
+        } else {
+            Scalar(
+                inOneOf = ctx.parent.ruleIndex == Proto3Parser.RULE_one_of,
+                isEnum = types.isEnum,
+                isOptional = (ctx.isOptional == null)
+            )
+        }
 
         val attr = ProtoMessageAttribute(
             normalAttributeName,
@@ -255,7 +260,11 @@ class Proto3FileBuilder(
      * First checks if it's just a scalar.
      * Then looks in the current message node if one is supplied, then in the current file and then in the whole tree.
      */
-    private fun resolveType(messageNode: MessageNode?, typeText: String): Types {
+    private fun resolveType(
+        messageNode: MessageNode?,
+        typeText: String,
+        isOptional: Boolean = false
+    ): Types {
         val (scalar, protoType) = when (typeText) {
             "double" -> DOUBLE to ProtoType.DOUBLE
             "float" -> FLOAT to ProtoType.FLOAT
@@ -277,7 +286,7 @@ class Proto3FileBuilder(
                 scalar,
                 doDiffer = false,
                 isEnum = false,
-                isNullable = false,
+                isNullable = isOptional,
                 protoType = protoType
             )
         }
