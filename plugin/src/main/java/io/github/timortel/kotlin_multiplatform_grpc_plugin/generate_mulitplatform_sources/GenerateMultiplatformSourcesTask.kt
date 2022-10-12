@@ -80,7 +80,7 @@ private fun generateProtoFiles(
             val proto3File = parser.file()
 
             val javaUseMultipleFiles = proto3File.option()
-                .any { it.optionName.text == "java_multiple_files" && it.optionValueExpression.text == "true" }
+                .any { it.optionName?.text == "java_multiple_files" && it.optionValueExpression?.text == "true" }
 
             val proto3FileBuilder =
                 Proto3FileBuilder(protoFile.nameWithoutExtension, protoFile.name, packetTree, javaUseMultipleFiles)
