@@ -25,4 +25,20 @@ abstract class GrpcMultiplatformExtension {
         targetSourcesMap.convention(emptyMap())
         protoSourceFolders.convention(emptyList())
     }
+
+    fun setTargetSourceCommon(sourceSet: List<KotlinSourceSet>) {
+        targetSourcesMap.put(OutputTarget.COMMON, sourceSet)
+    }
+
+    fun setTargetSourceJvm(sourceSet: List<KotlinSourceSet>) {
+        targetSourcesMap.put(OutputTarget.JVM, sourceSet)
+    }
+
+    fun setTargetSourceJs(sourceSet: List<KotlinSourceSet>) {
+        targetSourcesMap.put(OutputTarget.JS, sourceSet)
+    }
+
+    fun setTargetSourceIos(sourceSet: List<KotlinSourceSet>) {
+        targetSourcesMap.put(OutputTarget.IOS, sourceSet)
+    }
 }
