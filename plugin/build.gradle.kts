@@ -54,8 +54,8 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    antlr("org.antlr:antlr4:4.10.1")
-    implementation("org.antlr:antlr4:4.10.1")
+    antlr("org.antlr:antlr4:4.11.1")
+    implementation("org.antlr:antlr4:4.11.1")
 
     implementation("com.squareup:kotlinpoet:1.12.0")
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0")
