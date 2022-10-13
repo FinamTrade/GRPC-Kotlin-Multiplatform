@@ -51,7 +51,9 @@ class ProtoMessageAttribute(
                     Const.Enum.getEnumForNumFunctionName
                 )
             }
-
+            ProtoType.BYTES -> {
+                CodeBlock.of(default ?: "byteArrayOf()")
+            }
             ProtoType.MAP -> throw IllegalStateException()
         }
 

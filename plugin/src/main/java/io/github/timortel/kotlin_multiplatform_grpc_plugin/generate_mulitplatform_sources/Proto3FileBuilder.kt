@@ -274,6 +274,7 @@ class Proto3FileBuilder(
             "uint64" -> LONG to ProtoType.INT_64
             "bool" -> BOOLEAN to ProtoType.BOOL
             "string" -> STRING to ProtoType.STRING
+            "bytes" -> BYTE_ARRAY to ProtoType.BYTES
             else -> null to null
         }
 

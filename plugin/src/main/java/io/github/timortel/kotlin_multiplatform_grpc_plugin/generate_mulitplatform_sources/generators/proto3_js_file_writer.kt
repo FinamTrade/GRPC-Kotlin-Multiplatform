@@ -190,7 +190,7 @@ fun generateBridgeClass(parentClass: ClassName?, message: ProtoMessage): TypeSpe
                                     0
                                 )
 
-                            ProtoType.MAP -> throw IllegalStateException()
+                            ProtoType.MAP, ProtoType.BYTES -> throw IllegalStateException()
                         }
 
                         val setterCodeBlock = when (attr.types.protoType) {
@@ -214,7 +214,7 @@ fun generateBridgeClass(parentClass: ClassName?, message: ProtoMessage): TypeSpe
                                 )
                             }
 
-                            ProtoType.MAP -> throw IllegalStateException()
+                            ProtoType.MAP, ProtoType.BYTES -> throw IllegalStateException()
                             ProtoType.MESSAGE ->
                                 CodeBlock.of(
                                     "%T.%N(%N, %L, %N.%N)",
@@ -282,7 +282,7 @@ fun generateBridgeClass(parentClass: ClassName?, message: ProtoMessage): TypeSpe
                                 objPropertyName
                             )
 
-                            ProtoType.MAP -> throw IllegalStateException()
+                            ProtoType.MAP, ProtoType.BYTES -> throw IllegalStateException()
                         }
 
                         val getterCode = when (attr.types.protoType) {
@@ -352,7 +352,7 @@ fun generateBridgeClass(parentClass: ClassName?, message: ProtoMessage): TypeSpe
                                     attr.protoId
                                 )
 
-                            ProtoType.MAP -> throw IllegalStateException()
+                            ProtoType.MAP, ProtoType.BYTES -> throw IllegalStateException()
                         }
 
                         val arrayType = ClassName("kotlin", "Array")
@@ -484,7 +484,7 @@ private fun writeSerializeBinaryToWriter(message: ProtoMessage): CodeBlock {
                             "writeString" to false
                         }
 
-                        ProtoType.MAP -> throw IllegalStateException()
+                        ProtoType.MAP, ProtoType.BYTES -> throw IllegalStateException()
                         ProtoType.MESSAGE -> {
                             beginControlFlow(" != null)")
                             addStatement(
@@ -556,7 +556,7 @@ private fun getWriterFunction(protoType: ProtoType) = when (protoType) {
     ProtoType.INT_64 -> "writeInt64"
     ProtoType.BOOL -> "writeBool"
     ProtoType.STRING -> "writeString"
-    ProtoType.MAP -> throw IllegalArgumentException()
+    ProtoType.MAP, ProtoType.BYTES -> throw IllegalArgumentException()
     ProtoType.MESSAGE -> "writeMessage"
     ProtoType.ENUM -> "writeEnum"
 }
@@ -568,7 +568,7 @@ private fun getRepeatedWriterFunction(protoType: ProtoType) = when (protoType) {
     ProtoType.INT_64 -> "writePackedInt64"
     ProtoType.BOOL -> "writePackedBool"
     ProtoType.STRING -> "writeRepeatedString"
-    ProtoType.MAP -> throw IllegalArgumentException()
+    ProtoType.MAP, ProtoType.BYTES -> throw IllegalArgumentException()
     ProtoType.MESSAGE -> "writeRepeatedMessage"
     ProtoType.ENUM -> "writePackedEnum"
 }
@@ -634,7 +634,7 @@ private fun writeDeserializeBinaryFromReader(message: ProtoMessage): CodeBlock {
                             )
                         }
 
-                        ProtoType.MAP -> throw IllegalStateException()
+                        ProtoType.MAP, ProtoType.BYTES -> throw IllegalStateException()
                     }
                 }
 
@@ -665,7 +665,7 @@ private fun writeDeserializeBinaryFromReader(message: ProtoMessage): CodeBlock {
                             addStatement("%N += value", getRepeatedListVarName(attr))
                         }
 
-                        ProtoType.MAP -> throw IllegalStateException()
+                        ProtoType.MAP, ProtoType.BYTES -> throw IllegalStateException()
                     }
                 }
 
@@ -745,6 +745,7 @@ private fun getDefaultValueLiteral(protoType: ProtoType) = when (protoType) {
     ProtoType.BOOL -> false
     ProtoType.STRING -> ""
     ProtoType.MAP -> throw IllegalArgumentException("Maps never need a default type")
+    ProtoType.BYTES -> throw IllegalArgumentException("Bytes never need a default type")
     ProtoType.MESSAGE -> throw IllegalArgumentException("Message default cannot be represented as a literal")
     ProtoType.ENUM -> 0
 }
@@ -758,6 +759,7 @@ private fun getScalarReadFunctionName(protoType: ProtoType) = when (protoType) {
     ProtoType.ENUM -> "readEnum"
     ProtoType.STRING -> "readString"
     ProtoType.MAP -> throw IllegalArgumentException("Map does not have a read function.")
+    ProtoType.BYTES -> throw IllegalArgumentException("Bytes does not have a read function.")
     ProtoType.MESSAGE -> "readMessage"
 }
 
@@ -768,7 +770,7 @@ private fun getRepeatedReadFunctionName(protoType: ProtoType) = when (protoType)
     ProtoType.INT_64 -> "readPackedInt64"
     ProtoType.BOOL -> "readPackedBool"
     ProtoType.ENUM -> "readPackedEnum"
-    ProtoType.MAP, ProtoType.MESSAGE, ProtoType.STRING -> throw IllegalArgumentException("Map, string and message do not have repeated read functions.")
+    ProtoType.MAP, ProtoType.BYTES, ProtoType.MESSAGE, ProtoType.STRING -> throw IllegalArgumentException("Map, bytes, string and message do not have repeated read functions.")
 }
 
 fun writeJsFiles(protoFile: ProtoFile, jsOutputDir: File) {

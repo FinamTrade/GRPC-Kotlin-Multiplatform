@@ -25,6 +25,7 @@ enum class ProtoType {
     BOOL,
     STRING,
     MAP,
+    BYTES,
     MESSAGE,
     ENUM
 }
