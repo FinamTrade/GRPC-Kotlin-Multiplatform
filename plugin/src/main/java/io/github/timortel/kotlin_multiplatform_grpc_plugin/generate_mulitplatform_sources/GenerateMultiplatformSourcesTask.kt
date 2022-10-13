@@ -82,8 +82,20 @@ private fun generateProtoFiles(
             val javaUseMultipleFiles = proto3File.option()
                 .any { it.optionName?.text == "java_multiple_files" && it.optionValueExpression?.text == "true" }
 
-            val proto3FileBuilder =
-                Proto3FileBuilder(protoFile.nameWithoutExtension, protoFile.name, packetTree, javaUseMultipleFiles)
+            val javaPackage = proto3File.option()
+                .firstOrNull { it.optionName.text == "java_package" }
+                ?.optionValueString
+                ?.text
+                ?.replace("\"", "")
+
+            val proto3FileBuilder = Proto3FileBuilder(
+                fileNameWithoutExtensions = protoFile.nameWithoutExtension,
+                fileName = protoFile.name,
+                packageTree = packetTree,
+                javaUseMultipleFiles = javaUseMultipleFiles,
+                javaPackage = javaPackage
+            )
+
             ParseTreeWalker().walk(
                 proto3FileBuilder,
                 proto3File

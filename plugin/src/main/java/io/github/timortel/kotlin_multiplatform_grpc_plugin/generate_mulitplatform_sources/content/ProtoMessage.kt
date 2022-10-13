@@ -14,6 +14,7 @@ data class ProtoMessage(
     val children: List<ProtoMessage>,
     val protoFileName: String,
     val javaUseMultipleFiles: Boolean,
+    val javaPackage: String?,
 ) {
     val capitalizedName = name.capitalize(Locale.ROOT)
 
@@ -22,7 +23,8 @@ data class ProtoMessage(
     val commonType: ClassName = parent?.commonType?.nestedClass(commonName) ?: ClassName(pkg, commonName)
     val jsType: ClassName =
         parent?.jsType?.nestedClass("JS_${name.capitalize()}") ?: ClassName(pkg, "JS_${name.capitalize()}")
-    val jvmType: ClassName = parent?.jvmType?.nestedClass(name) ?: getJVMClassName(pkg, protoFileName, javaUseMultipleFiles, listOf(name))
+    val jvmType: ClassName = parent?.jvmType?.nestedClass(name)
+        ?: getJVMClassName(pkg, protoFileName, javaUseMultipleFiles, listOf(name), javaPackage)
     val iosType = commonType
 
     override fun toString(): String = name
