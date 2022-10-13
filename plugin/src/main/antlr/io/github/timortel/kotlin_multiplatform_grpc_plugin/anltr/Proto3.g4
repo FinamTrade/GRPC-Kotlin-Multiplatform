@@ -12,9 +12,11 @@ syntax_def : 'syntax' COMMENT_OR_WS? '=' COMMENT_OR_WS? VALUE_STRING COMMENT_OR_
 
 option : 'option' COMMENT_OR_WS? optionName=EXPRESSION_NAME COMMENT_OR_WS? '=' COMMENT_OR_WS? (optionValueString=VALUE_STRING | optionValueExpression=EXPRESSION_NAME) COMMENT_OR_WS? ';';
 
-message : 'message' COMMENT_OR_WS? messageName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? (message_attribute | one_of | proto_enum | message | map))* COMMENT_OR_WS? '}';
+message : 'message' COMMENT_OR_WS? messageName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? (message_attribute | one_of | proto_enum | message | map | extensions))* COMMENT_OR_WS? '}';
 
 extend : 'extend' COMMENT_OR_WS? messageName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? (message_attribute | one_of | proto_enum | message | map))* COMMENT_OR_WS? '}';
+
+extensions: 'extensions' COMMENT_OR_WS? min=VALUE_STRING 'to' max=VALUE_STRING COMMENT_OR_WS? ';';
 
 message_attribute : isOptional='optional'? repeated='repeated'? COMMENT_OR_WS? type=EXPRESSION_NAME COMMENT_OR_WS? name=EXPRESSION_NAME COMMENT_OR_WS? '=' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? '['? COMMENT_OR_WS? 'default='? COMMENT_OR_WS? defaultValue=VALUE_STRING? COMMENT_OR_WS? ']'? '['? COMMENT_OR_WS? 'deprecated='? COMMENT_OR_WS? isDeprecated=VALUE_STRING? COMMENT_OR_WS? ']'? COMMENT_OR_WS? ';';
 
