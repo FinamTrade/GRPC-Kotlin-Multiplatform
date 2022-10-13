@@ -18,7 +18,8 @@ class Proto3FileBuilder(
     private val fileNameWithoutExtensions: String,
     private val fileName: String,
     private val packageTree: PackageNode,
-    private val javaUseMultipleFiles: Boolean
+    private val javaUseMultipleFiles: Boolean,
+    private val javaPackage: String?,
 ) : Proto3BaseListener() {
 
     private var packageName: String? = null
@@ -110,7 +111,8 @@ class Proto3FileBuilder(
             parent,
             children,
             fileNameWithoutExtensions,
-            javaUseMultipleFiles
+            javaUseMultipleFiles,
+            javaPackage
         )
         children += messageReader.childMessages.map { childMessageReader ->
             buildMessageTree(childMessageReader, protoMessage)

@@ -10,10 +10,14 @@ fun getJVMClassName(
     pkg: String,
     protoFileName: String,
     useMultipleFiles: Boolean,
-    baseFileNames: List<String>
+    baseFileNames: List<String>,
+    javaPackage: String? = null,
 ): ClassName {
-    return if (useMultipleFiles) ClassName(pkg, baseFileNames)
-    else ClassName(pkg, listOf(protoFileName.capitalize()) + baseFileNames)
+    return if (useMultipleFiles) {
+        ClassName(javaPackage ?: pkg, baseFileNames)
+    } else {
+        ClassName(pkg, listOf(protoFileName.capitalize()) + baseFileNames)
+    }
 }
 
 fun getJSClassName(pkg: String, baseFileNames: List<String>): ClassName = ClassName(pkg, baseFileNames.map { "JS_$it" })
