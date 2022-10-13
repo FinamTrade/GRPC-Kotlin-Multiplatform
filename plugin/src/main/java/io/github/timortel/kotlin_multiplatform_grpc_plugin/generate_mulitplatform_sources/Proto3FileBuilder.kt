@@ -140,7 +140,7 @@ class Proto3FileBuilder(
         }
 
         val attr = ProtoMessageAttribute(
-            normalAttributeName,
+            normalAttributeName.replace(Regex("_.")) { it.value.last().uppercase() },
             types.commonType,
             types,
             type,
