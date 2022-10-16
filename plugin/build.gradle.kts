@@ -10,6 +10,9 @@ group = "io.github.timortel"
 version = "0.2.1"
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
     withSourcesJar()
     withJavadocJar()
 }
