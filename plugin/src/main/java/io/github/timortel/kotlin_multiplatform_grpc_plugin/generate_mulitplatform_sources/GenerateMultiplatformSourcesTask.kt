@@ -11,8 +11,6 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.ParseTreeWalker
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.tasks.Input
 import org.slf4j.Logger
 import java.io.File
 
@@ -37,12 +35,14 @@ abstract class GenerateMultiplatformSourcesTask : DefaultTask() {
 
         doLast {
             val sourceFolders = grpcMultiplatformExtension.protoSourceFolders.get()
+            val dependencyFolders = grpcMultiplatformExtension.protoDependencyFolders.get()
             val outputFolder = getOutputFolder(project)
             outputFolder.mkdirs()
 
             generateProtoFiles(
                 logger,
                 sourceFolders,
+                dependencyFolders,
                 generateTarget,
                 commonOutputFolder = getCommonOutputFolder(project),
                 jvmOutputFolder = getJVMOutputFolder(project),
@@ -56,6 +56,7 @@ abstract class GenerateMultiplatformSourcesTask : DefaultTask() {
 private fun generateProtoFiles(
     log: Logger,
     protoFolders: List<File>,
+    dependencyFolders: List<File>,
     generateTarget: Map<GrpcMultiplatformExtension.OutputTarget, Boolean>,
     commonOutputFolder: File,
     jvmOutputFolder: File,
@@ -69,11 +70,20 @@ private fun generateProtoFiles(
             .toList()
     }.flatten()
 
+    val dependencyProtoFiles = dependencyFolders.map { dependencyFolder ->
+        dependencyFolder
+            .walk(FileWalkDirection.TOP_DOWN)
+            .filter { it.isFile && it.extension == "proto" }
+            .toList()
+    }.flatten()
+
     val packetTree = PacketTreeBuilder.buildPacketTree(sourceProtoFiles)
+    val dependenciesTree = PacketTreeBuilder.buildPacketTree(dependencyProtoFiles)
 
     val protoFiles = sourceProtoFiles
-        .map { protoFile ->
+        .mapNotNull { protoFile ->
             log.debug("Generating KMP sources for proto file=$protoFile")
+
             val lexer = Proto3Lexer(CharStreams.fromStream(protoFile.inputStream()))
             val parser = Proto3Parser(CommonTokenStream(lexer))
 
@@ -92,6 +102,7 @@ private fun generateProtoFiles(
                 fileNameWithoutExtensions = protoFile.nameWithoutExtension,
                 fileName = protoFile.name,
                 packageTree = packetTree,
+                dependenciesTree = dependenciesTree,
                 javaUseMultipleFiles = javaUseMultipleFiles,
                 javaPackage = javaPackage
             )

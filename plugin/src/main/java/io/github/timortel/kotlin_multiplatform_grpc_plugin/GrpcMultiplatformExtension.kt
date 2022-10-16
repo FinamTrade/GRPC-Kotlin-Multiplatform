@@ -14,6 +14,8 @@ abstract class GrpcMultiplatformExtension {
 
     abstract val protoSourceFolders: ListProperty<File>
 
+    abstract val protoDependencyFolders: ListProperty<File>
+
     enum class OutputTarget {
         COMMON,
         JVM,
@@ -24,6 +26,7 @@ abstract class GrpcMultiplatformExtension {
     init {
         targetSourcesMap.convention(emptyMap())
         protoSourceFolders.convention(emptyList())
+        protoDependencyFolders.convention(emptyList())
     }
 
     fun setTargetSourceCommon(sourceSet: List<KotlinSourceSet>) {
