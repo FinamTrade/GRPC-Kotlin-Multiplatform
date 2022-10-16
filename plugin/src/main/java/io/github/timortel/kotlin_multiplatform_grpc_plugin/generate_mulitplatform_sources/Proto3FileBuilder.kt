@@ -18,6 +18,7 @@ class Proto3FileBuilder(
     private val fileNameWithoutExtensions: String,
     private val fileName: String,
     private val packageTree: PackageNode,
+    private val dependenciesTree: PackageNode,
     private val javaUseMultipleFiles: Boolean,
     private val javaPackage: String?,
 ) : Proto3BaseListener() {
@@ -306,6 +307,7 @@ class Proto3FileBuilder(
 
         //Priority 3: Look in the whole package structure
         return resolveTypeInTree(packageTree, emptyList(), typeText)
+            ?: resolveTypeInTree(dependenciesTree, emptyList(), typeText)
             ?: throw RuntimeException("No message or enum $typeText found.")
     }
 
