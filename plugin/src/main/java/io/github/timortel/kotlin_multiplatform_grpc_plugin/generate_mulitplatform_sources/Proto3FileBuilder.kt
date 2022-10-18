@@ -123,7 +123,7 @@ class Proto3FileBuilder(
     }
 
     override fun enterMessage_attribute(ctx: Proto3Parser.Message_attributeContext) {
-        val currentReadingStack = messageReadingStack.peekFirst()
+        val currentReadingStack = messageReadingStack.peekFirst() ?: return
 
         val normalAttributeName = ctx.name.text
         val types = resolveType(currentReadingStack.messageNode, ctx.type.text)
