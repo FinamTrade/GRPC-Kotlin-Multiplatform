@@ -10,7 +10,7 @@ proto_import : 'import' (WS? 'public')? COMMENT_OR_WS? VALUE_STRING COMMENT_OR_W
 
 syntax_def : 'syntax' COMMENT_OR_WS? '=' COMMENT_OR_WS? name=VALUE_STRING COMMENT_OR_WS? ';';
 
-option : 'option' COMMENT_OR_WS? optionName=EXPRESSION_NAME COMMENT_OR_WS? '=' COMMENT_OR_WS? (optionValueString=VALUE_STRING | optionValueExpression=EXPRESSION_NAME) COMMENT_OR_WS? ';';
+option : 'option' COMMENT_OR_WS? optionName=EXPRESSION_NAME COMMENT_OR_WS? '=' COMMENT_OR_WS? (optionValueString=VALUE_STRING | optionValueExpression=(EXPRESSION_NAME | GO_PACKAGE_STRING)) COMMENT_OR_WS? ';';
 
 message : 'message' COMMENT_OR_WS? messageName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? (message_attribute | one_of | proto_enum | message | map | extensions))* COMMENT_OR_WS? '}';
 
@@ -44,3 +44,4 @@ EXPRESSION_NAME : ([a-zA-Z0-9_.])+;
 WS_NO_NEWLINE : (' ' | '\t')+ -> skip;
 WS : (' ' | '\t' | '\n')+ -> skip;
 VALUE_STRING : '"' EXPRESSION_NAME? '"';
+GO_PACKAGE_STRING: '"' EXPRESSION_NAME? ';'? EXPRESSION_NAME? '"';
