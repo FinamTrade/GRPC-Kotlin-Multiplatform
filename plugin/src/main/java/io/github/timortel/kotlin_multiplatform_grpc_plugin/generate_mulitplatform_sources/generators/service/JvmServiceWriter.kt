@@ -84,7 +84,7 @@ object JvmServiceWriter : ServiceWriter(true) {
                 addCode("%M(", Const.Message.CommonFunction.JVM.commonFunction(rpc.response.jvmType))
             }
 
-            addCode("%N.${rpc.rpcName}(", Const.Service.JVM.PROPERTY_JVM_IMPL)
+            addCode("%N.${rpc.rpcName.replaceFirstChar { it.lowercase() }}(", Const.Service.JVM.PROPERTY_JVM_IMPL)
 
             if (rpc.request.doDiffer) {
                 addCode("request.%N, ", Const.Message.Constructor.JVM.PARAM_IMPL)
