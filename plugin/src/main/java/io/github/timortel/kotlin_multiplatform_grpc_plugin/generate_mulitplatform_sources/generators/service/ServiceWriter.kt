@@ -48,7 +48,7 @@ abstract class ServiceWriter(private val isActual: Boolean) {
 
                             addFunction(
                                 FunSpec
-                                    .builder(rpc.rpcName)
+                                    .builder(rpc.rpcName.replaceFirstChar { it.lowercase() })
                                     .addModifiers(KModifier.SUSPEND)
                                     .addModifiers(classAndFunctionModifiers)
                                     .addParameter(Const.Service.RpcCall.PARAM_REQUEST, rpc.request.commonType)
