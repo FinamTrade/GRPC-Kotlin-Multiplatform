@@ -6,6 +6,7 @@ import io.github.timortel.kotlin_multiplatform_grpc_plugin.anltr.Proto3Parser
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.writeProtoFile
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.writeServiceFile
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.message_tree.PacketTreeBuilder
+import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.message_tree.isProto3
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.ParseTreeWalker
@@ -89,33 +90,37 @@ private fun generateProtoFiles(
 
             val proto3File = parser.file()
 
-            val javaUseMultipleFiles = proto3File.option()
-                .any { it.optionName?.text == "java_multiple_files" && it.optionValueExpression?.text == "true" }
+            if (proto3File.syntax_def().isProto3()) {
+                val javaUseMultipleFiles = proto3File.option()
+                    .any { it.optionName?.text == "java_multiple_files" && it.optionValueExpression?.text == "true" }
 
-            val javaPackage = proto3File.option()
-                .firstOrNull { it.optionName.text == "java_package" }
-                ?.optionValueString
-                ?.text
-                ?.replace("\"", "")
+                val javaPackage = proto3File.option()
+                    .firstOrNull { it.optionName.text == "java_package" }
+                    ?.optionValueString
+                    ?.text
+                    ?.replace("\"", "")
 
-            val proto3FileBuilder = Proto3FileBuilder(
-                fileNameWithoutExtensions = protoFile.nameWithoutExtension,
-                fileName = protoFile.name,
-                packageTree = packetTree,
-                dependenciesTree = dependenciesTree,
-                javaUseMultipleFiles = javaUseMultipleFiles,
-                javaPackage = javaPackage
-            )
+                val proto3FileBuilder = Proto3FileBuilder(
+                    fileNameWithoutExtensions = protoFile.nameWithoutExtension,
+                    fileName = protoFile.name,
+                    packageTree = packetTree,
+                    dependenciesTree = dependenciesTree,
+                    javaUseMultipleFiles = javaUseMultipleFiles,
+                    javaPackage = javaPackage
+                )
 
-            ParseTreeWalker().walk(
-                proto3FileBuilder,
-                proto3File
-            )
+                ParseTreeWalker().walk(
+                    proto3FileBuilder,
+                    proto3File
+                )
 
-            val result = proto3FileBuilder.protoFile
-                ?: throw IllegalArgumentException("Failed generating protos for $protoFile because builder returned null.")
+                val result = proto3FileBuilder.protoFile
+                    ?: throw IllegalArgumentException("Failed generating protos for $protoFile because builder returned null.")
 
-            result
+                result
+            } else {
+                null
+            }
         }
 
     protoFiles.forEach { protoFile ->

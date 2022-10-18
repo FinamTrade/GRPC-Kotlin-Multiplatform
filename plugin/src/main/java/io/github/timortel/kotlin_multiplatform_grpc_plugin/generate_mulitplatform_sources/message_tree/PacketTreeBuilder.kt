@@ -12,27 +12,32 @@ object PacketTreeBuilder {
      * @return the root package node
      */
     fun buildPacketTree(protoFiles: List<File>): PackageNode {
-        val nodes = protoFiles.map { protoFile ->
+        val nodes = protoFiles.mapNotNull { protoFile ->
             val lexer = Proto3Lexer(CharStreams.fromStream(protoFile.inputStream()))
 
             val parser = Proto3Parser(CommonTokenStream(lexer))
 
             val file = parser.file()
-            val messageNodes = Proto3MessageTreeBuilder().visit(file)
-            val fullPackage = file.proto_package().firstOrNull()?.pkgName?.text ?: ""
+            if (file.syntax_def().isProto3()) {
+                val messageNodes = Proto3MessageTreeBuilder().visit(file)
+                val fullPackage = file.proto_package().firstOrNull()?.pkgName?.text ?: ""
 
-            var remainingPackageString = fullPackage
-            var child: PackageNode? = null
-            while (remainingPackageString.isNotEmpty()) {
-                val packageString = remainingPackageString.substringAfterLast('.')
-                remainingPackageString = remainingPackageString.substringBeforeLast('.', missingDelimiterValue = "")
+                var remainingPackageString = fullPackage
+                var child: PackageNode? = null
+                while (remainingPackageString.isNotEmpty()) {
+                    val packageString = remainingPackageString.substringAfterLast('.')
+                    remainingPackageString = remainingPackageString.substringBeforeLast('.', missingDelimiterValue = "")
 
-                val messages = if (child == null) messageNodes else emptyList()
+                    val messages = if (child == null) messageNodes else emptyList()
 
-                child = PackageNode(packageString, messages, if (child == null) emptyList() else listOf(child))
+                    child = PackageNode(packageString, messages, if (child == null) emptyList() else listOf(child))
+                }
+
+                return@mapNotNull child ?: PackageNode("", messageNodes, emptyList())
+            } else {
+                println("WARNING: file ${protoFile.name} has unsupported ${file.syntax_def().name?.text}")
+                return@mapNotNull null
             }
-
-            child ?: PackageNode("", messageNodes, emptyList())
         }
 
         //messages without a package
@@ -55,4 +60,8 @@ object PacketTreeBuilder {
                 PackageNode(packageName, combinedMessages, merged)
             }
     }
+}
+
+fun Proto3Parser.Syntax_defContext.isProto3(): Boolean {
+    return (name?.text?.replace("\"", "")?.equals("proto3", true) == true);
 }

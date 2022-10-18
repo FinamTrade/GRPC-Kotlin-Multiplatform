@@ -8,7 +8,7 @@ proto_package : 'package' COMMENT_OR_WS? pkgName=EXPRESSION_NAME COMMENT_OR_WS? 
 
 proto_import : 'import' (WS? 'public')? COMMENT_OR_WS? VALUE_STRING COMMENT_OR_WS? ';';
 
-syntax_def : 'syntax' COMMENT_OR_WS? '=' COMMENT_OR_WS? VALUE_STRING COMMENT_OR_WS? ';';
+syntax_def : 'syntax' COMMENT_OR_WS? '=' COMMENT_OR_WS? name=VALUE_STRING COMMENT_OR_WS? ';';
 
 option : 'option' COMMENT_OR_WS? optionName=EXPRESSION_NAME COMMENT_OR_WS? '=' COMMENT_OR_WS? (optionValueString=VALUE_STRING | optionValueExpression=EXPRESSION_NAME) COMMENT_OR_WS? ';';
 
