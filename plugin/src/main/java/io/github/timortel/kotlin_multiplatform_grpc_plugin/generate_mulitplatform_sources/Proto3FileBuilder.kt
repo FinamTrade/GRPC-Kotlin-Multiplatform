@@ -147,7 +147,7 @@ class Proto3FileBuilder(
             type,
             ctx.num.text.toInt(),
             isOneOfAttribute = currentOneOfAttributes != null,
-            default = ctx.defaultValue?.text
+            default = ctx.param_default().firstOrNull()?.defaultValue?.text
         )
         currentReadingStack.attributes += attr
 
