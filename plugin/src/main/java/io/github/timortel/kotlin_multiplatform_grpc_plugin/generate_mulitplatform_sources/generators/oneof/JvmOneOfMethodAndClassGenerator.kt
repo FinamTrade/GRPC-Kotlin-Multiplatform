@@ -31,25 +31,33 @@ object JvmOneOfMethodAndClassGenerator : OneOfMethodAndClassGenerator(true) {
                     oneOf.attributes.forEach { attr ->
                         addCode(
                             "%T.%N.%N -> %T(",
-                            //JVM Builder types
                             message.jvmType,
                             jvmProtoEnumClassName,
                             attr.originalName.uppercase(),
                             Const.Message.OneOf.childClassName(message, oneOf, attr),
                             )
 
-                        if (attr.types.protoType == ProtoType.MESSAGE) {
-                            addCode("%M(", Const.Message.CommonFunction.JVM.commonFunction(attr))
-                        }
+                        if (attr.types.protoType == ProtoType.ENUM) {
+                            addCode("%T.%N(%N.%N.number)",
+                                attr.commonType,
+                                Const.Enum.getEnumForNumFunctionName,
+                                implName,
+                                Const.Message.Attribute.Scalar.JVM.getFunction(message, attr).simpleName
+                            )
+                        } else {
+                            if (attr.types.protoType == ProtoType.MESSAGE) {
+                                addCode("%M(", Const.Message.CommonFunction.JVM.commonFunction(attr))
+                            }
 
-                        addCode(
-                            "%N.%N",
-                            implName,
-                            Const.Message.Attribute.Scalar.JVM.getFunction(message, attr).simpleName
-                        )
+                            addCode(
+                                "%N.%N",
+                                implName,
+                                Const.Message.Attribute.Scalar.JVM.getFunction(message, attr).simpleName
+                            )
 
-                        if (attr.types.protoType == ProtoType.MESSAGE) {
-                            addCode(")")
+                            if (attr.types.protoType == ProtoType.MESSAGE) {
+                                addCode(")")
+                            }
                         }
 
                         addCode(")\n")
@@ -62,7 +70,7 @@ object JvmOneOfMethodAndClassGenerator : OneOfMethodAndClassGenerator(true) {
                     )
                     //Unknown case
                     addCode("else -> %T", Const.Message.OneOf.unknownClassName(message, oneOf))
-                    addCode("}")
+                    addCode("\n}")
                 }
                 .build()
         )
