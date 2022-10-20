@@ -233,7 +233,7 @@ class Proto3FileBuilder(
         super.exitOne_of(ctx)
 
         messageReadingStack.peekFirst().oneOfs += ProtoOneOf(
-            ctx.one_of_name.text,
+            ctx.one_of_name.text.replace(Regex("_.")) { it.value.last().uppercase() },
             currentOneOfAttributes!!,
             messageReadingStack.peekFirst().oneOfs.size
         )
