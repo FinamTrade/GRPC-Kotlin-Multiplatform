@@ -1,7 +1,9 @@
 package io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.dsl
 
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
+import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.ProtoType
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.Const
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.map.mapper.CommonToJvmMapMapper
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.generators.map.mapper.MapMapper
@@ -54,7 +56,15 @@ object JvmDslBuilder : SubDslBuilder(true) {
                 Const.Message.Constructor.JVM.PARAM_IMPL
             )
         } else {
-            CodeBlock.of(variableName)
+            if (attribute.types.protoType == ProtoType.BYTES) {
+               CodeBlock.of(
+                   "%T.copyFrom(%N)",
+                   ClassName("com.google.protobuf", "ByteString"),
+                   variableName
+               )
+            } else {
+                CodeBlock.of(variableName)
+            }
         }
 
         builder.addCode("%N.%N(", builderVariable, f)
