@@ -141,7 +141,8 @@ class Proto3FileBuilder(
         }
 
         val attr = ProtoMessageAttribute(
-            normalAttributeName.replace(Regex("_.")) { it.value.last().uppercase() },
+            name = normalAttributeName.replace(Regex("_.")) { it.value.last().uppercase() },
+            originalName = normalAttributeName,
             types.commonType,
             types,
             type,
@@ -163,6 +164,7 @@ class Proto3FileBuilder(
         val type = MapType(keyTypes, valueTypes)
 
         val attr = ProtoMessageAttribute(
+            ctx.name.text,
             ctx.name.text,
             MAP,
             Types(
