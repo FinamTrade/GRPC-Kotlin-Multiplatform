@@ -6,5 +6,6 @@ class ProtoRpc(
     val rpcName: String,
     val request: Types,
     val response: Types,
+    val isRequestStream: Boolean,
     val isResponseStream: Boolean,
 )

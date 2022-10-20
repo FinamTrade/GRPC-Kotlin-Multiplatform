@@ -117,6 +117,16 @@ suspend fun <REQ : KMMessage, RES : KMMessage> serverSideStreamingCallImplementa
     }
 }
 
+suspend fun <REQ : KMMessage, RES : KMMessage> bidiStreamingCallImplementation(
+    channel: KMChannel,
+    path: String,
+    request: Flow<REQ>,
+    responseDeserializer: MessageDeserializer<RES>
+): Flow<RES> {
+    // TODO()
+    return emptyFlow()
+}
+
 private class CallHandler(
     private val onReceive: (data: Any) -> Unit,
     private val onError: (error: NSError) -> Unit,

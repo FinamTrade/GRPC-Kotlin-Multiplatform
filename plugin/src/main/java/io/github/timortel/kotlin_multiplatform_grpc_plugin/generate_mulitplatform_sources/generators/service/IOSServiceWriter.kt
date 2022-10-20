@@ -56,7 +56,13 @@ object IOSServiceWriter : ServiceWriter(true) {
         service: ProtoService,
         rpc: ProtoRpc
     ) {
-        val impl = if (rpc.isResponseStream) iosServerSideStreamingCallImplementation else iosUnaryCallImplementation
+        val impl = if (rpc.isRequestStream) {
+            iosBidiStreamingCallImplementation
+        } else if (rpc.isResponseStream) {
+            iosServerSideStreamingCallImplementation
+        } else {
+            iosUnaryCallImplementation
+        }
 
         builder.addStatement(
             "return %M(%N.withMetadata(%N), %S, %N, %T.Companion)",

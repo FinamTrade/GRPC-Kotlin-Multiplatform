@@ -164,8 +164,8 @@ class Proto3FileBuilder(
         val type = MapType(keyTypes, valueTypes)
 
         val attr = ProtoMessageAttribute(
-            ctx.name.text,
-            ctx.name.text,
+            name = ctx.name.text.replace(Regex("_.")) { it.value.last().uppercase() },
+            originalName = ctx.name.text,
             MAP,
             Types(
                 MAP,
@@ -207,12 +207,14 @@ class Proto3FileBuilder(
         val requestTypes = resolveType(null, ctx.request.text)
         val responseTypes = resolveType(null, ctx.response.text)
 
+        val isRequestStream = ctx.requestStream != null
         val isResponseStream = ctx.stream != null
 
         currentServiceRpcs += ProtoRpc(
             rpcName,
             requestTypes,
             responseTypes,
+            isRequestStream,
             isResponseStream
         )
     }
