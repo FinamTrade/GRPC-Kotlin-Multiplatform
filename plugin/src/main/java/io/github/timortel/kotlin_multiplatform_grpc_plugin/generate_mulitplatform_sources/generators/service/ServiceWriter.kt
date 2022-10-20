@@ -51,7 +51,15 @@ abstract class ServiceWriter(private val isActual: Boolean) {
                                     .builder(rpc.rpcName.replaceFirstChar { it.lowercase() })
                                     .addModifiers(KModifier.SUSPEND)
                                     .addModifiers(classAndFunctionModifiers)
-                                    .addParameter(Const.Service.RpcCall.PARAM_REQUEST, rpc.request.commonType)
+                                    .addParameter(
+                                        name = Const.Service.RpcCall.PARAM_REQUEST,
+                                        type = if (rpc.isRequestStream) {
+                                            ClassName("kotlinx.coroutines.flow", "Flow")
+                                                .parameterizedBy(rpc.request.commonType)
+                                        } else {
+                                            rpc.request.commonType
+                                        }
+                                    )
                                     .addParameter(
                                         ParameterSpec
                                             .builder(Const.Service.RpcCall.PARAM_METADATA, kmMetadata)

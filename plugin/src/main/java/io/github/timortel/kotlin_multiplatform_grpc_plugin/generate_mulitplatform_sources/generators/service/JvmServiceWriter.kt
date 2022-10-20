@@ -87,7 +87,15 @@ object JvmServiceWriter : ServiceWriter(true) {
             addCode("%N.${rpc.rpcName.replaceFirstChar { it.lowercase() }}(", Const.Service.JVM.PROPERTY_JVM_IMPL)
 
             if (rpc.request.doDiffer) {
-                addCode("request.%N, ", Const.Message.Constructor.JVM.PARAM_IMPL)
+                if (rpc.isRequestStream) {
+                    addCode(
+                        "request.%M·{ it.%N }, ",
+                        MemberName("kotlinx.coroutines.flow", "map"),
+                        Const.Message.Constructor.JVM.PARAM_IMPL
+                    )
+                } else {
+                    addCode("request.%N, ", Const.Message.Constructor.JVM.PARAM_IMPL)
+                }
             } else {
                 addCode("request, ")
             }

@@ -26,7 +26,7 @@ one_of : 'oneof' WS? one_of_name=EXPRESSION_NAME WS? '{' (COMMENT_OR_WS? message
 
 service : 'service' COMMENT_OR_WS? serviceName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? rpc)* COMMENT_OR_WS? '}';
 
-rpc : 'rpc' COMMENT_OR_WS? rpcName=EXPRESSION_NAME COMMENT_OR_WS? '(' COMMENT_OR_WS? request=EXPRESSION_NAME COMMENT_OR_WS? ')' COMMENT_OR_WS? 'returns' COMMENT_OR_WS? '(' COMMENT_OR_WS? stream='stream'? COMMENT_OR_WS? response=EXPRESSION_NAME COMMENT_OR_WS? ')' COMMENT_OR_WS? rpc_body? COMMENT_OR_WS? ';'?;
+rpc : 'rpc' COMMENT_OR_WS? rpcName=EXPRESSION_NAME COMMENT_OR_WS? '(' COMMENT_OR_WS? requestStream='stream'? COMMENT_OR_WS? request=EXPRESSION_NAME COMMENT_OR_WS? ')' COMMENT_OR_WS? 'returns' COMMENT_OR_WS? '(' COMMENT_OR_WS? stream='stream'? COMMENT_OR_WS? response=EXPRESSION_NAME COMMENT_OR_WS? ')' COMMENT_OR_WS? rpc_body? COMMENT_OR_WS? ';'?;
 
 rpc_body : '{' (COMMENT_OR_WS | rpc_option_deprecated | rpc_option)+ '}';
 
