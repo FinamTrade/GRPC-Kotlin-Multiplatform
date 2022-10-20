@@ -34,7 +34,7 @@ object JvmOneOfMethodAndClassGenerator : OneOfMethodAndClassGenerator(true) {
                             //JVM Builder types
                             message.jvmType,
                             jvmProtoEnumClassName,
-                            attr.name.uppercase(),
+                            attr.originalName.uppercase(),
                             Const.Message.OneOf.childClassName(message, oneOf, attr),
                             )
 

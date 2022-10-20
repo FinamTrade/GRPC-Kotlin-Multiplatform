@@ -16,6 +16,7 @@ import java.util.*
  */
 class ProtoMessageAttribute(
     val name: String,
+    val originalName: String,
     val commonType: ClassName,
     val types: Types,
     val attributeType: AttributeType,
