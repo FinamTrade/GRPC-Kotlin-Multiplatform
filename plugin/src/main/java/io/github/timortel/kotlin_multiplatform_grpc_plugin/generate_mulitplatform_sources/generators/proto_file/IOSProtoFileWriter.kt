@@ -913,7 +913,7 @@ class IOSProtoFileWriter(private val protoFile: ProtoFile) : ProtoFileWriter(pro
 
                 ProtoType.BYTES -> {
                     CodeBlock.of(
-                        "%M(%L, %N.%M { NSData.%M(it.%M(0), %N.size.%M()) })",
+                        "%M(%L, %N.%M { NSData.%M(bytes = it.%M(0), length = %N.size.%M()) })",
                         getComputeDataTypeSizeMember(attr.types.protoType, true),
                         attr.protoId,
                         attr.name,
