@@ -36,7 +36,7 @@ rpc_option : 'option' COMMENT_OR_WS? '('? name=EXPRESSION_NAME ')'? EXPRESSION_N
 
 rpc_option_body : ('{' COMMENT_OR_WS? (EXPRESSION_NAME COMMENT_OR_WS? ':' COMMENT_OR_WS? (PARAMETRIZED_STRING | VALUE_STRING) COMMENT_OR_WS?)+ '}');
 
-proto_enum : 'enum' WS? enumName=EXPRESSION_NAME WS? '{' WS? (COMMENT_OR_WS? enum_field)+ COMMENT_OR_WS? '}' ';'?;
+proto_enum : 'enum' WS? enumName=EXPRESSION_NAME WS? '{' WS? (COMMENT_OR_WS? (option | enum_field))+ COMMENT_OR_WS? '}' ';'?;
 
 enum_field : name=EXPRESSION_NAME WS? '=' WS? num=NUM WS? param_deprecated? COMMENT_OR_WS? ';';
 
