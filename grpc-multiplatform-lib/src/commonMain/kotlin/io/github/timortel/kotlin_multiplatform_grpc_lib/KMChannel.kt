@@ -7,6 +7,8 @@ expect class KMChannel {
     class Builder {
         companion object {
             fun forAddress(name: String, port: Int): Builder
+
+            fun forTarget(target: String): Builder
         }
 
         fun usePlaintext(): Builder
