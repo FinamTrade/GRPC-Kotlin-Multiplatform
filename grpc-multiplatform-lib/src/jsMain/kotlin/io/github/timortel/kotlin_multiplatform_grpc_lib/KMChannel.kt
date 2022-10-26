@@ -1,10 +1,10 @@
 package io.github.timortel.kotlin_multiplatform_grpc_lib
 
-actual class KMChannel private constructor(name: String, port: Int, usePlainText: Boolean) {
+actual class KMChannel private constructor(target: String, usePlainText: Boolean) {
 
-    val connectionString = (if (usePlainText) "http://" else "https://") + "$name:$port"
+    val connectionString = (if (usePlainText) "http://" else "https://") + target
 
-    actual data class Builder(val name: String, val port: Int) {
+    actual data class Builder(val target: String) {
 
         private var usePlainText: Boolean = false
 
@@ -12,7 +12,11 @@ actual class KMChannel private constructor(name: String, port: Int, usePlainText
             actual fun forAddress(
                 name: String,
                 port: Int
-            ): Builder = Builder(name, port)
+            ): Builder = Builder("$name:$port")
+
+            actual fun forTarget(
+                target: String
+            ): Builder = Builder(target)
         }
 
         actual fun usePlaintext(): Builder {
@@ -21,6 +25,6 @@ actual class KMChannel private constructor(name: String, port: Int, usePlainText
         }
 
         actual fun build(): KMChannel =
-            io.github.timortel.kotlin_multiplatform_grpc_lib.KMChannel(name, port, usePlainText)
+            io.github.timortel.kotlin_multiplatform_grpc_lib.KMChannel(target, usePlainText)
     }
 }

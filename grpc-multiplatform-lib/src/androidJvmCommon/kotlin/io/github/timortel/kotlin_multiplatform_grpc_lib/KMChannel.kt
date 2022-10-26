@@ -13,6 +13,10 @@ actual class KMChannel private constructor(val managedChannel: ManagedChannel) {
             ): Builder {
                 return Builder(ManagedChannelBuilder.forAddress(name, port))
             }
+
+            actual fun forTarget(target: String): Builder {
+                return Builder(ManagedChannelBuilder.forTarget(target))
+            }
         }
 
         actual fun usePlaintext(): Builder = apply {

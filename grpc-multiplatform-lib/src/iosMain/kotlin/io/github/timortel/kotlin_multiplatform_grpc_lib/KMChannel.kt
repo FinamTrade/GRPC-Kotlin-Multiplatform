@@ -1,11 +1,15 @@
 package io.github.timortel.kotlin_multiplatform_grpc_lib
 
-import cocoapods.GRPCClient.*
+import cocoapods.GRPCClient.GRPCCallOptions
+import cocoapods.GRPCClient.GRPCCallSafetyDefault
+import cocoapods.GRPCClient.GRPCDefaultTransportImplList_
+import cocoapods.GRPCClient.GRPCMutableCallOptions
+import cocoapods.GRPCClient.GRPCRequestOptions
 import io.github.timortel.kotlin_multiplatform_grpc_lib.util.TimeUnit
 
-actual class KMChannel(private val name: String, private val port: Int, val callOptions: GRPCCallOptions) {
+actual class KMChannel(private val target: String, val callOptions: GRPCCallOptions) {
 
-    fun buildRequestOptions(path: String) = GRPCRequestOptions("$name:$port", path, safety = GRPCCallSafetyDefault)
+    fun buildRequestOptions(path: String) = GRPCRequestOptions(target, path, safety = GRPCCallSafetyDefault)
 
     fun withDeadlineAfter(duration: Long, unit: TimeUnit): KMChannel {
         val mutableOptions = callOptions.mutableCopy() as GRPCMutableCallOptions
@@ -15,17 +19,17 @@ actual class KMChannel(private val name: String, private val port: Int, val call
 
         mutableOptions.setTimeout(seconds)
 
-        return KMChannel(name, port, mutableOptions)
+        return KMChannel(target, mutableOptions)
     }
 
     fun withMetadata(metadata: KMMetadata): KMChannel {
         val mutableOptions = callOptions.mutableCopy() as GRPCMutableCallOptions
         mutableOptions.setInitialMetadata(metadata.metadataMap.toMap())
 
-        return KMChannel(name, port, mutableOptions)
+        return KMChannel(target, mutableOptions)
     }
 
-    actual class Builder(private val name: String, private val port: Int) {
+    actual class Builder(private val target: String) {
 
         private val callOptions = GRPCMutableCallOptions()
 
@@ -33,7 +37,11 @@ actual class KMChannel(private val name: String, private val port: Int, val call
             actual fun forAddress(
                 name: String,
                 port: Int
-            ): Builder = Builder(name, port)
+            ): Builder = Builder("$name:$port")
+
+            actual fun forTarget(
+                target: String
+            ): Builder = Builder(target)
         }
 
         actual fun usePlaintext(): Builder {
@@ -41,6 +49,6 @@ actual class KMChannel(private val name: String, private val port: Int, val call
             return this
         }
 
-        actual fun build(): KMChannel = KMChannel(name, port, callOptions)
+        actual fun build(): KMChannel = KMChannel(target, callOptions)
     }
 }
