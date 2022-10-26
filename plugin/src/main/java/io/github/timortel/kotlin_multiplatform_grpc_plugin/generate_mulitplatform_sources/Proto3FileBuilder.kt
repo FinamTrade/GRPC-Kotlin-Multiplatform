@@ -312,6 +312,8 @@ class Proto3FileBuilder(
         //Priority 3: Look in the whole package structure
         return resolveTypeInTree(packageTree, emptyList(), typeText)
             ?: resolveTypeInTree(dependenciesTree, emptyList(), typeText)
+            ?: resolveTypeWithoutPackageNameInTree(packageTree, emptyList(), typeText)
+            ?: resolveTypeWithoutPackageNameInTree(dependenciesTree, emptyList(), typeText)
             ?: throw RuntimeException("No message or enum $typeText found.")
     }
 
@@ -332,6 +334,23 @@ class Proto3FileBuilder(
                 ?: return null
 
             resolveTypeInTree(packageNode, parents + node, remainingTypeText)
+        }
+    }
+
+    private fun resolveTypeWithoutPackageNameInTree(node: PackageNode, parents: List<PackageNode>, typeText: String): Types? {
+        val matchingMessage = node.nodes.firstOrNull { it.name == typeText }
+        val pkg = parents.joinToString(".") { it.packageName }
+
+        return if (matchingMessage != null) {
+            return resolveMessageOrEnumInMessageTree(pkg, matchingMessage, String())
+        } else {
+            for (node in node.children) {
+                val result = resolveTypeWithoutPackageNameInTree(node, parents + node, typeText)
+                if (result != null)
+                    return result
+            }
+
+            return null
         }
     }
 
