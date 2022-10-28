@@ -20,7 +20,7 @@ extensions: 'extensions' COMMENT_OR_WS? min=VALUE_STRING 'to' max=VALUE_STRING C
 
 reserved_field : 'reserved' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? ';';
 
-message_attribute : isOptional='optional'? repeated='repeated'? COMMENT_OR_WS? type=EXPRESSION_NAME COMMENT_OR_WS? name=('enum' | 'default' | 'option' | 'message' | 'syntax' | 'to' | EXPRESSION_NAME) COMMENT_OR_WS? '=' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? (param_default | param_deprecated)* ';';
+message_attribute : isOptional='optional'? repeated='repeated'? COMMENT_OR_WS? type=EXPRESSION_NAME COMMENT_OR_WS? name=('enum' | 'default' | 'option' | 'message' | 'syntax' | 'to' | EXPRESSION_NAME) COMMENT_OR_WS? '=' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? (param_default | param_deprecated | param_jstype)* ';';
 
 one_of : 'oneof' WS? one_of_name=EXPRESSION_NAME WS? '{' (COMMENT_OR_WS? message_attribute)* COMMENT_OR_WS? '}';
 
@@ -45,6 +45,8 @@ map : 'map' WS? '<' WS? key_type=EXPRESSION_NAME WS? ',' WS? value_type=EXPRESSI
 param_default : '[' COMMENT_OR_WS? 'default' COMMENT_OR_WS? '=' COMMENT_OR_WS? defaultValue=EXPRESSION_NAME COMMENT_OR_WS? ']';
 
 param_deprecated : '[' COMMENT_OR_WS? 'deprecated' COMMENT_OR_WS? '=' COMMENT_OR_WS? isDeprecated=EXPRESSION_NAME COMMENT_OR_WS? ']';
+
+param_jstype : '[' COMMENT_OR_WS? 'jstype' COMMENT_OR_WS? '=' COMMENT_OR_WS? isJsType=EXPRESSION_NAME COMMENT_OR_WS? ']';
 
 COMMENT_OR_WS : (COMMENT | LINE_COMMENT | WS) -> skip;
 
