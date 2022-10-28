@@ -12,7 +12,7 @@ syntax_def : 'syntax' COMMENT_OR_WS? '=' COMMENT_OR_WS? name=VALUE_STRING COMMEN
 
 option : 'option' COMMENT_OR_WS? optionName=('deprecated' | EXPRESSION_NAME) COMMENT_OR_WS? '=' COMMENT_OR_WS? (optionValueString=VALUE_STRING | optionValueExpression=(EXPRESSION_NAME | GO_PACKAGE_STRING)) COMMENT_OR_WS? ';';
 
-message : 'message' COMMENT_OR_WS? messageName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? (option | message_attribute | one_of | proto_enum | message | map | extensions | reserved_field) ';'?)* COMMENT_OR_WS? '}';
+message : 'message' COMMENT_OR_WS? messageName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? (option | message_attribute | one_of | proto_enum | message | map | extensions | reserved_field) ';'?)* COMMENT_OR_WS? '}' ';'?;
 
 extend : 'extend' COMMENT_OR_WS? messageName=EXPRESSION_NAME COMMENT_OR_WS? '{' (COMMENT_OR_WS? (message_attribute | one_of | proto_enum | message | map))* COMMENT_OR_WS? '}';
 
