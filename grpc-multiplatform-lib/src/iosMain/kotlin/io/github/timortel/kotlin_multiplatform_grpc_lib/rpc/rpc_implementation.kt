@@ -123,8 +123,60 @@ suspend fun <REQ : KMMessage, RES : KMMessage> bidiStreamingCallImplementation(
     request: Flow<REQ>,
     responseDeserializer: MessageDeserializer<RES>
 ): Flow<RES> {
-    // TODO()
-    return emptyFlow()
+    val flow = MutableSharedFlow<StreamingResponse<RES>>()
+    val isDone = MutableStateFlow(false)
+
+    val scope = CoroutineScope(coroutineContext)
+
+    val handler = CallHandler(
+        onReceive = { data ->
+            val msg = responseDeserializer.deserialize(data as NSData)
+            scope.launch {
+                flow.emit(StreamingResponse.Message(msg))
+            }
+        },
+        onError = { error ->
+            val exception = KMStatusException(
+                KMStatus(KMCode.getCodeForValue(error.code.toInt()), error.description ?: "No description"),
+                null
+            )
+
+            scope.launch {
+                flow.emit(StreamingResponse.StatusException(exception))
+            }
+        },
+        onDone = {
+            isDone.value = true
+        }
+    )
+
+    val call = GRPCCall2(channel.buildRequestOptions(path), handler, channel.callOptions)
+
+    isDone.takeWhile { !it }.transform {
+        request.collect {
+            emit(it)
+        }
+    }.onStart {
+        call.start()
+    }.onEach {
+        call.writeData(it)
+    }.onCompletion {
+        call.finish()
+    }.launchIn(scope)
+
+    return isDone.takeWhile { !it }.transform {
+        flow.collect { response ->
+            when (response) {
+                is StreamingResponse.Message -> emit(response.msg)
+                is StreamingResponse.StatusException -> throw response.exception
+            }
+        }
+    }.onCompletion {
+        try {
+            scope.cancel()
+        } catch (_: IllegalStateException) {
+        }
+    }
 }
 
 private class CallHandler(
