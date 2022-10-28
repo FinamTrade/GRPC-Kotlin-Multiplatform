@@ -441,6 +441,7 @@ class IOSProtoFileWriter(private val protoFile: ProtoFile) : ProtoFileWriter(pro
                             ProtoType.INT_32,
                             ProtoType.INT_64,
                             ProtoType.BOOL,
+                            ProtoType.BYTES,
                             ProtoType.STRING -> addWriteScalarCode(attr.attributeType.valueTypes)
 
                             ProtoType.ENUM -> addWriteEnumCode()
@@ -450,8 +451,7 @@ class IOSProtoFileWriter(private val protoFile: ProtoFile) : ProtoFileWriter(pro
                                 Const.Message.IOS.SerializeFunction.STREAM_PARAM
                             )
 
-                            ProtoType.MAP,
-                            ProtoType.BYTES -> throw IllegalStateException()
+                            ProtoType.MAP -> throw IllegalStateException()
                         }
 
                         addCode(")\n")
@@ -762,7 +762,14 @@ class IOSProtoFileWriter(private val protoFile: ProtoFile) : ProtoFileWriter(pro
                             ProtoType.INT_64,
                             ProtoType.BOOL,
                             ProtoType.STRING -> addReadScalarCode(attr.attributeType.valueTypes)
-
+                            ProtoType.BYTES -> addCode(CodeBlock.of(
+                                "{·%N.stream.%N().run·{·ByteArray(length.toInt()).apply·{·%M·{·pinned·->·%M(pinned.%M(0),·bytes,·length)·}·}·}·}",
+                                wrapperParamName,
+                                "readBytes",
+                                MemberName(packageName = "kotlinx.cinterop", simpleName = "usePinned", isExtension = true),
+                                MemberName(packageName = "platform.posix", simpleName = "memcpy", isExtension = true),
+                                MemberName(packageName = "kotlinx.cinterop", simpleName = "addressOf", isExtension = true)
+                            ))
                             ProtoType.MESSAGE -> addCode(
                                 "{·%M(this, %T.Companion::%N)}",
                                 readKMMessage,
@@ -771,8 +778,7 @@ class IOSProtoFileWriter(private val protoFile: ProtoFile) : ProtoFileWriter(pro
                             )
 
                             ProtoType.ENUM -> addReadEnumCode(attr.attributeType.valueTypes)
-                            ProtoType.MAP,
-                            ProtoType.BYTES -> throw IllegalStateException()
+                            ProtoType.MAP -> throw IllegalStateException()
                         }
                         addCode(")\n")
                     }
@@ -845,6 +851,7 @@ class IOSProtoFileWriter(private val protoFile: ProtoFile) : ProtoFileWriter(pro
             ProtoType.INT_32,
             ProtoType.INT_64,
             ProtoType.BOOL,
+            ProtoType.BYTES,
             ProtoType.STRING, ProtoType.MESSAGE -> CodeBlock.of(
                 "::%M",
                 getComputeDataTypeSizeMember(valueTypes.protoType, true)
@@ -856,8 +863,7 @@ class IOSProtoFileWriter(private val protoFile: ProtoFile) : ProtoFileWriter(pro
                 Const.Enum.VALUE_PROPERTY_NAME
             )
 
-            ProtoType.MAP,
-            ProtoType.BYTES -> throw IllegalStateException()
+            ProtoType.MAP -> throw IllegalStateException()
         }
     }
 
