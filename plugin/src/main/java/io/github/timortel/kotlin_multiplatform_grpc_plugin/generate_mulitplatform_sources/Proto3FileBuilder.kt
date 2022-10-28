@@ -9,6 +9,7 @@ import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatfor
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.message_tree.MessageNode
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.message_tree.Node
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.message_tree.PackageNode
+import java.lang.NumberFormatException
 import java.util.*
 
 /**
@@ -243,7 +244,13 @@ class Proto3FileBuilder(
     }
 
     override fun exitEnum_field(ctx: Proto3Parser.Enum_fieldContext) {
-        val enumField = ProtoEnumField(ctx.name.text, ctx.num.text.toInt())
+        val num = try {
+            ctx.num.text.toInt()
+        } catch (_: NumberFormatException) {
+            ctx.num.text.removePrefix("0x").toInt(16)
+        }
+
+        val enumField = ProtoEnumField(ctx.name.text, num)
         currentEnumFields += enumField
     }
 
