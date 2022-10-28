@@ -418,6 +418,7 @@ class Proto3FileBuilder(
             }
             is MessageNode -> {
                 val child = node.children.firstOrNull { it.name == nodeText }
+                    ?: node.parent?.children?.firstOrNull { it.name == nodeText }
                     ?: return null
 
                 return resolveMessageOrEnumInMessageTree(pkg, child, remainingTypeText)
