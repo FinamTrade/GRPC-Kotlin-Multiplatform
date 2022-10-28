@@ -28,7 +28,7 @@ service : 'service' COMMENT_OR_WS? serviceName=EXPRESSION_NAME COMMENT_OR_WS? '{
 
 rpc : 'rpc' COMMENT_OR_WS? rpcName=EXPRESSION_NAME COMMENT_OR_WS? '(' COMMENT_OR_WS? requestStream='stream'? COMMENT_OR_WS? request=EXPRESSION_NAME COMMENT_OR_WS? ')' COMMENT_OR_WS? 'returns' COMMENT_OR_WS? '(' COMMENT_OR_WS? stream='stream'? COMMENT_OR_WS? response=EXPRESSION_NAME COMMENT_OR_WS? ')' COMMENT_OR_WS? rpc_body? COMMENT_OR_WS? ';'?;
 
-rpc_body : '{' ((COMMENT_OR_WS | rpc_option_deprecated | rpc_option)+)? '}';
+rpc_body : '{' (COMMENT_OR_WS | rpc_option_deprecated | rpc_option)* '}';
 
 rpc_option_deprecated : 'option' COMMENT_OR_WS? 'deprecated' COMMENT_OR_WS? '=' COMMENT_OR_WS? isDeprecated=EXPRESSION_NAME ';';
 
