@@ -20,7 +20,7 @@ extensions: 'extensions' COMMENT_OR_WS? min=VALUE_STRING 'to' max=VALUE_STRING C
 
 reserved_field : 'reserved' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? ';';
 
-message_attribute : isOptional='optional'? repeated='repeated'? COMMENT_OR_WS? type=EXPRESSION_NAME COMMENT_OR_WS? name=('default' | 'option' | 'message' | 'syntax' | 'to' | EXPRESSION_NAME) COMMENT_OR_WS? '=' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? (param_default | param_deprecated)* ';';
+message_attribute : isOptional='optional'? repeated='repeated'? COMMENT_OR_WS? type=EXPRESSION_NAME COMMENT_OR_WS? name=('enum' | 'default' | 'option' | 'message' | 'syntax' | 'to' | EXPRESSION_NAME) COMMENT_OR_WS? '=' COMMENT_OR_WS? num=NUM COMMENT_OR_WS? (param_default | param_deprecated)* ';';
 
 one_of : 'oneof' WS? one_of_name=EXPRESSION_NAME WS? '{' (COMMENT_OR_WS? message_attribute)* COMMENT_OR_WS? '}';
 
